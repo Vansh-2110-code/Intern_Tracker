@@ -2,17 +2,17 @@
 
 :root {
   /* Colors */
-  --bg-primary: #070a13;
-  --bg-secondary: #0c0f1d;
-  --bg-tertiary: #13172c;
+  --bg-primary: #04020a;
+  --bg-secondary: #080514;
+  --bg-tertiary: #0e0a22;
   
-  --glass-bg: rgba(12, 16, 33, 0.65);
-  --glass-bg-hover: rgba(18, 24, 48, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-focus: rgba(99, 102, 241, 0.4);
+  --glass-bg: rgba(8, 5, 20, 0.45);
+  --glass-bg-hover: rgba(14, 9, 32, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-border-focus: rgba(99, 102, 241, 0.45);
   
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
   --text-muted: #64748b;
   
   --primary: #6366f1;
@@ -94,6 +94,19 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background-color: var(--bg-primary);
+  /* Moving space grid background */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center;
+  animation: gridMove 40s linear infinite;
+}
+
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 50px 50px; }
 }
 
 .main-content {
@@ -104,9 +117,8 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   z-index: 1;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 60%),
-    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 60%),
-    radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.03) 0px, transparent 70%);
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.05) 0px, transparent 60%);
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -227,22 +239,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glass-input, .glass-select, .glass-textarea {
-  background: rgba(8, 12, 26, 0.6);
-  border: 1px solid var(--glass-border);
+  background: rgba(8, 5, 20, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--border-radius-md);
   padding: 0.875rem 1.125rem;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
   outline: none;
 }
 
 .glass-input:focus, .glass-select:focus, .glass-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-  background: rgba(8, 12, 26, 0.9);
+  border-color: #a5b4fc;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(8, 5, 20, 0.7);
 }
 
 .glass-select option {
@@ -263,7 +275,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
 }
 
@@ -275,7 +287,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.45);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.55), 0 0 10px rgba(99, 102, 241, 0.3);
 }
 
 .btn-primary:active {
@@ -530,6 +542,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .kanban-card {
   cursor: grab;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3) !important;
 }
 
 .kanban-card:active {
@@ -662,4 +681,50 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+/* Premium Dashboard Widget Glowing Borders */
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stat-card:has(.purple) {
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.05);
+}
+
+.stat-card:has(.purple):hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+}
+
+.stat-card:has(.blue) {
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.05);
+}
+
+.stat-card:has(.blue):hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+}
+
+.stat-card:has(.warning-icon-wrapper) {
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.05);
+}
+
+.stat-card:has(.warning-icon-wrapper):hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);
+}
+
+.stat-card:has(.green) {
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05);
+}
+
+.stat-card:has(.green):hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
 }
