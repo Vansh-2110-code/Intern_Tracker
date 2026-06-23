@@ -1,0 +1,32 @@
+services:
+  # 1. Backend Web Service
+  - type: web
+    name: intern-tracker-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false # You will paste your MongoDB Atlas connection string here
+      - key: JWT_SECRET
+        generateValue: true # Render will automatically generate a secure secret
+
+  # 2. Frontend Static Site
+  - type: web
+    name: intern-tracker-frontend
+    env: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: intern-tracker-backend
+          type: web
+          property: host
+        value: ${host}/api # Automatically links to the backend's URL
