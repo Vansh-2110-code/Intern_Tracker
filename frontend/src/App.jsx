@@ -28,8 +28,8 @@ function DashboardLayout({ children }) {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const userJson = localStorage.getItem('intern_tracker_user');
-  const token = localStorage.getItem('intern_tracker_token');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
+  const token = sessionStorage.getItem('intern_tracker_token');
 
   // Fetch notifications
   const loadNotifications = async () => {
@@ -208,8 +208,8 @@ function DashboardLayout({ children }) {
 }
 
 function RootRedirect() {
-  const token = localStorage.getItem('intern_tracker_token');
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const token = sessionStorage.getItem('intern_tracker_token');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   
   if (!token || !userJson) {
     return <Navigate to="/login" replace />;

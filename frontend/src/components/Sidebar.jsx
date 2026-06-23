@@ -16,12 +16,12 @@ import { api } from '../utils/api';
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const navigate = useNavigate();
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
 
   const handleLogout = async () => {
     await api.auth.logout();
-    localStorage.removeItem('intern_tracker_user');
+    sessionStorage.removeItem('intern_tracker_user');
     if (toggleSidebar && isOpen) toggleSidebar();
     navigate('/login');
   };

@@ -19,7 +19,7 @@ export default function SkillsLog() {
   const [formError, setFormError] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
   const isAdmin = user?.role === 'admin';
 

@@ -13,8 +13,8 @@ export default function Login() {
 
   // Redirect if already logged in
   useEffect(() => {
-    const token = localStorage.getItem('intern_tracker_token');
-    const userJson = localStorage.getItem('intern_tracker_user');
+    const token = sessionStorage.getItem('intern_tracker_token');
+    const userJson = sessionStorage.getItem('intern_tracker_user');
     if (token && userJson) {
       const user = JSON.parse(userJson);
       if (user.role === 'admin' || user.role === 'manager') {
@@ -37,7 +37,7 @@ export default function Login() {
 
     try {
       const response = await api.auth.login(username.trim(), password);
-      localStorage.setItem('intern_tracker_user', JSON.stringify(response.user));
+      sessionStorage.setItem('intern_tracker_user', JSON.stringify(response.user));
       
       if (response.user.role === 'admin' || response.user.role === 'manager') {
         navigate('/admin');

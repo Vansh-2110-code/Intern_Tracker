@@ -2,7 +2,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Helper to make API requests with Authorization header
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem('intern_tracker_token');
+  const token = sessionStorage.getItem('intern_tracker_token');
   
   const headers = {
     'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ username, password })
       });
-      localStorage.setItem('intern_tracker_token', data.token);
+      sessionStorage.setItem('intern_tracker_token', data.token);
       return data;
     },
     register: async (registerData) => {
@@ -53,7 +53,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(registerData)
       });
-      localStorage.setItem('intern_tracker_token', data.token);
+      sessionStorage.setItem('intern_tracker_token', data.token);
       return data;
     },
     getMe: () => request('/auth/me'),
@@ -63,7 +63,7 @@ export const api = {
       } catch (err) {
         console.error('Logout API failed:', err);
       } finally {
-        localStorage.removeItem('intern_tracker_token');
+        sessionStorage.removeItem('intern_tracker_token');
       }
     }
   },

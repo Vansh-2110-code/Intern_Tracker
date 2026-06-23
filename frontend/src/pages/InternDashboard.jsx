@@ -20,7 +20,7 @@ export default function InternDashboard() {
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
 
   useEffect(() => {

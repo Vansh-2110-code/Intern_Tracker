@@ -22,8 +22,8 @@ export default function Register() {
 
   // Redirect if already logged in
   useEffect(() => {
-    const token = localStorage.getItem('intern_tracker_token');
-    const userJson = localStorage.getItem('intern_tracker_user');
+    const token = sessionStorage.getItem('intern_tracker_token');
+    const userJson = sessionStorage.getItem('intern_tracker_user');
     if (token && userJson) {
       const user = JSON.parse(userJson);
       if (user.role === 'admin' || user.role === 'manager') {
@@ -60,7 +60,7 @@ export default function Register() {
         internshipTitle: internshipTitle.trim()
       });
 
-      localStorage.setItem('intern_tracker_user', JSON.stringify(response.user));
+      sessionStorage.setItem('intern_tracker_user', JSON.stringify(response.user));
       
       // Auto-redirect to dashboard based on role
       if (response.user.role === 'manager') {

@@ -2,8 +2,8 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 export default function ProtectedRoute({ children, allowedRoles }) {
-  const token = localStorage.getItem('intern_tracker_token');
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const token = sessionStorage.getItem('intern_tracker_token');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
 
   if (!token || !user) {

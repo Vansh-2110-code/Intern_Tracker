@@ -26,7 +26,7 @@ export default function DailyTracker() {
   const [rejectComment, setRejectComment] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
   
   // Decide view based on router path

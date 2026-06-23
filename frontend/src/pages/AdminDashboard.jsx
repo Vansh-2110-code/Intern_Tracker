@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   const [profileSkills, setProfileSkills] = useState([]);
   const [profileReviews, setProfileReviews] = useState([]);
 
-  const userJson = localStorage.getItem('intern_tracker_user');
+  const userJson = sessionStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
 
   useEffect(() => {
