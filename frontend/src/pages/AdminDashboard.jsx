@@ -211,6 +211,7 @@ export default function AdminDashboard() {
   const getAllowedRegistrationRoles = () => {
     if (user?.role === 'admin') {
       return [
+        { value: 'admin', label: 'Administrator' },
         { value: 'manager', label: 'Manager' },
         { value: 'employee', label: 'Employee' },
         { value: 'intern', label: 'Intern' }

@@ -29,6 +29,9 @@ const ROLES = {
 };
 
 function canManage(supervisorRole, subordinateRole) {
+  if (supervisorRole === 'admin' && subordinateRole === 'admin') {
+    return true;
+  }
   return ROLES[supervisorRole] > ROLES[subordinateRole];
 }
 
@@ -164,7 +167,10 @@ app.get('/api/interns', authenticateToken, async (req, res) => {
     const subordinateRoles = Object.keys(ROLES).filter(role => canManage(req.user.role, role));
     const subordinates = await User.find({ role: { $in: subordinateRoles } });
     
-    res.json(subordinates.map(u => {
+    // Exclude the caller themselves from the list
+    const filteredSubordinates = subordinates.filter(u => String(u._id || u.id) !== String(req.user.id));
+    
+    res.json(filteredSubordinates.map(u => {
       const copy = u.toObject();
       delete copy.passwordHash;
       delete copy.salt;
