@@ -36,7 +36,9 @@ const UserSchema = new mongoose.Schema({
   internshipTitle: { type: String, default: '' },
   startDate: { type: String, default: '' },
   endDate: { type: String, default: '' },
-  status: { type: String, default: 'active', enum: ['active', 'inactive'] }
+  status: { type: String, default: 'active', enum: ['active', 'inactive'] },
+  isOnline: { type: Boolean, default: false },
+  lastActive: { type: Date, default: Date.now }
 });
 const UserModel = mongoose.model('User', UserSchema);
 

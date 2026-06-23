@@ -65,6 +65,11 @@ function authenticateToken(req, res, next) {
       return res.status(403).json({ error: "Invalid or expired token" });
     }
     req.user = user;
+    
+    // Update online status and last active timestamp in background
+    User.findByIdAndUpdate(user.id, { isOnline: true, lastActive: new Date() })
+      .catch(e => console.error("Error updating online status:", e));
+      
     next();
   });
 }
@@ -141,6 +146,11 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(403).json({ error: "Account is inactive" });
     }
 
+    // Update user online status
+    user.isOnline = true;
+    user.lastActive = new Date();
+    await user.save();
+
     // Create JWT token
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role, name: user.name },
@@ -156,6 +166,16 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: "Server database connection error." });
+  }
+});
+
+app.post('/api/auth/logout', authenticateToken, async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user.id, { isOnline: false });
+    res.json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ error: "Failed to logout" });
   }
 });
 
@@ -190,6 +210,12 @@ app.get('/api/interns', authenticateToken, async (req, res) => {
       const copy = u.toObject();
       delete copy.passwordHash;
       delete copy.salt;
+      
+      // Calculate isOnline dynamically: true only if isOnline is true and active in last 5 mins
+      const activeThreshold = 5 * 60 * 1000;
+      const isRecentlyActive = u.lastActive && (Date.now() - new Date(u.lastActive).getTime() < activeThreshold);
+      copy.isOnline = !!(u.isOnline && isRecentlyActive);
+      
       return copy;
     }));
   } catch (err) {

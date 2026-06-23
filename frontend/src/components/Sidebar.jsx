@@ -19,8 +19,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   const userJson = localStorage.getItem('intern_tracker_user');
   const user = userJson ? JSON.parse(userJson) : null;
 
-  const handleLogout = () => {
-    api.auth.logout();
+  const handleLogout = async () => {
+    await api.auth.logout();
     localStorage.removeItem('intern_tracker_user');
     if (toggleSidebar && isOpen) toggleSidebar();
     navigate('/login');

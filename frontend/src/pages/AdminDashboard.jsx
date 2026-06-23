@@ -363,6 +363,10 @@ export default function AdminDashboard() {
                       <span className={`badge badge-${sub.role === 'manager' ? 'review' : sub.role === 'employee' ? 'in-progress' : 'todo'}`} style={{ fontSize: '0.65rem', padding: '0.15rem 0.5rem' }}>
                         {sub.role}
                       </span>
+                      <span className={`status-badge ${sub.isOnline ? 'online' : 'offline'}`}>
+                        <span className="status-dot"></span>
+                        <span>{sub.isOnline ? 'Active Now' : 'Offline'}</span>
+                      </span>
                     </div>
                     <p className="intern-title-display">{sub.internshipTitle}</p>
                   </div>
@@ -1005,6 +1009,46 @@ export default function AdminDashboard() {
           border-radius: 4px;
           margin-bottom: 0.5rem;
           width: fit-content;
+        }
+
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.65rem;
+          font-weight: 600;
+          padding: 0.15rem 0.5rem;
+          border-radius: 9999px;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+          border: 1px solid var(--glass-border);
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge.online {
+          color: #34d399;
+          border-color: rgba(16, 185, 129, 0.2);
+          background: rgba(16, 185, 129, 0.05);
+        }
+
+        .status-badge.online .status-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--success);
+          box-shadow: 0 0 6px var(--success);
+        }
+
+        .status-badge.offline {
+          color: var(--text-muted);
+          border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge.offline .status-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--text-muted);
         }
       `}</style>
     </div>

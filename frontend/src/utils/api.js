@@ -57,8 +57,14 @@ export const api = {
       return data;
     },
     getMe: () => request('/auth/me'),
-    logout: () => {
-      localStorage.removeItem('intern_tracker_token');
+    logout: async () => {
+      try {
+        await request('/auth/logout', { method: 'POST' });
+      } catch (err) {
+        console.error('Logout API failed:', err);
+      } finally {
+        localStorage.removeItem('intern_tracker_token');
+      }
     }
   },
 
