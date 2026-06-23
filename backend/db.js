@@ -90,6 +90,19 @@ const NotificationSchema = new mongoose.Schema({
 });
 const NotificationModel = mongoose.model('Notification', NotificationSchema);
 
+// Configure all schemas to serialize virtual 'id'
+UserSchema.set('toJSON', { virtuals: true });
+UserSchema.set('toObject', { virtuals: true });
+TaskSchema.set('toJSON', { virtuals: true });
+TaskSchema.set('toObject', { virtuals: true });
+DailyLogSchema.set('toJSON', { virtuals: true });
+DailyLogSchema.set('toObject', { virtuals: true });
+SkillSchema.set('toJSON', { virtuals: true });
+SkillSchema.set('toObject', { virtuals: true });
+FeedbackSchema.set('toJSON', { virtuals: true });
+FeedbackSchema.set('toObject', { virtuals: true });
+NotificationSchema.set('toJSON', { virtuals: true });
+NotificationSchema.set('toObject', { virtuals: true });
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 2500 })
