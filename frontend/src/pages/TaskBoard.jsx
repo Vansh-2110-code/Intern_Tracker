@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ClipboardList, Plus, Search, Calendar, Edit3, Trash2, CheckCircle2, User, AlertCircle } from 'lucide-react';
+import { ClipboardList, Plus, Search, Calendar, Edit3, Trash2, CheckCircle2, User, AlertCircle, Play, Send, Check, XCircle } from 'lucide-react';
 import { api } from '../utils/api';
 
 const COLUMNS = [
@@ -65,16 +65,10 @@ export default function TaskBoard() {
     e.preventDefault();
   };
 
-  const handleDrop = async (e, targetStatus) => {
-    e.preventDefault();
-    const taskId = e.dataTransfer.getData('text/plain');
+  const updateTaskStatus = async (taskId, targetStatus) => {
     const task = tasks.find(t => t.id === taskId);
-    
     if (!task) return;
     if (task.status === targetStatus) return;
-
-    // Intern/Employee can only drag their own tasks on their personal board
-    if (!isTaskManager && task.internId !== user?.id) return;
 
     // Optimistic UI update
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: targetStatus } : t));
@@ -88,6 +82,32 @@ export default function TaskBoard() {
       const list = await api.tasks.getAll();
       setTasks(list);
     }
+  };
+
+  const handleRejectTask = (task) => {
+    setEditingTask(task);
+    setTaskForm({
+      internId: task.internId,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      feedback: task.feedback || '',
+      status: 'in_progress'
+    });
+    setShowAddModal(true);
+  };
+
+  const handleDrop = async (e, targetStatus) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData('text/plain');
+    const task = tasks.find(t => t.id === taskId);
+    
+    if (!task) return;
+
+    // Intern/Employee can only drag their own tasks on their personal board
+    if (!isTaskManager && task.internId !== user?.id) return;
+
+    await updateTaskStatus(taskId, targetStatus);
   };
 
   // Form submit (Create / Edit)
@@ -113,7 +133,8 @@ export default function TaskBoard() {
           title,
           description,
           dueDate,
-          feedback: taskForm.feedback || ''
+          feedback: taskForm.feedback || '',
+          status: taskForm.status || editingTask.status
         });
         setTasks(prev => prev.map(t => t.id === editingTask.id ? updated : t));
       } else {
@@ -135,7 +156,8 @@ export default function TaskBoard() {
       title: '',
       description: '',
       dueDate: '',
-      feedback: ''
+      feedback: '',
+      status: ''
     });
     setEditingTask(null);
   };
@@ -152,7 +174,8 @@ export default function TaskBoard() {
       title: task.title,
       description: task.description,
       dueDate: task.dueDate,
-      feedback: task.feedback || ''
+      feedback: task.feedback || '',
+      status: task.status
     });
     setShowAddModal(true);
   };
@@ -299,6 +322,67 @@ export default function TaskBoard() {
                             <Calendar size={13} />
                             <span>{task.dueDate}</span>
                           </div>
+                        </div>
+
+                        {/* Quick Action Buttons */}
+                        <div className="task-card-quick-actions">
+                          {!isTaskManager ? (
+                            // Intern / Staff Actions
+                            task.status !== 'completed' && (
+                              <div className="quick-action-buttons">
+                                {task.status === 'todo' && (
+                                  <button 
+                                    className="btn-quick start"
+                                    onClick={() => updateTaskStatus(task.id, 'in_progress')}
+                                    title="Start Task"
+                                  >
+                                    <Play size={12} />
+                                    <span>Start</span>
+                                  </button>
+                                )}
+                                {task.status === 'in_progress' && (
+                                  <button 
+                                    className="btn-quick review"
+                                    onClick={() => updateTaskStatus(task.id, 'review')}
+                                    title="Submit for Review"
+                                  >
+                                    <Send size={12} />
+                                    <span>Submit Review</span>
+                                  </button>
+                                )}
+                                <button 
+                                  className="btn-quick complete"
+                                  onClick={() => updateTaskStatus(task.id, 'completed')}
+                                  title="Mark Completed"
+                                >
+                                  <CheckCircle2 size={12} />
+                                  <span>Complete</span>
+                                </button>
+                              </div>
+                            )
+                          ) : (
+                            // Manager / Admin Actions
+                            task.status === 'review' && (
+                              <div className="quick-action-buttons">
+                                <button 
+                                  className="btn-quick approve"
+                                  onClick={() => updateTaskStatus(task.id, 'completed')}
+                                  title="Approve & Complete"
+                                >
+                                  <Check size={12} />
+                                  <span>Approve</span>
+                                </button>
+                                <button 
+                                  className="btn-quick reject"
+                                  onClick={() => handleRejectTask(task)}
+                                  title="Request Changes"
+                                >
+                                  <XCircle size={12} />
+                                  <span>Reject</span>
+                                </button>
+                              </div>
+                            )
+                          )}
                         </div>
 
                         {task.feedback && (
@@ -551,6 +635,63 @@ export default function TaskBoard() {
           font-weight: 500;
           color: var(--warning);
           margin-top: 0.5rem;
+        }
+
+        .task-card-quick-actions {
+          margin-top: 0.6rem;
+          border-top: 1px dashed rgba(255, 255, 255, 0.08);
+          padding-top: 0.6rem;
+        }
+
+        .quick-action-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+
+        .btn-quick {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--glass-border);
+          color: var(--text-secondary);
+          padding: 0.3rem 0.5rem;
+          border-radius: 6px;
+          font-size: 0.725rem;
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          font-weight: 500;
+        }
+
+        .btn-quick:hover {
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.08);
+          transform: translateY(-1px);
+        }
+
+        .btn-quick.start:hover {
+          background: rgba(99, 102, 241, 0.15);
+          border-color: rgba(99, 102, 241, 0.4);
+          color: #818cf8;
+        }
+
+        .btn-quick.review:hover {
+          background: rgba(168, 85, 247, 0.15);
+          border-color: rgba(168, 85, 247, 0.4);
+          color: #c084fc;
+        }
+
+        .btn-quick.complete:hover, .btn-quick.approve:hover {
+          background: rgba(16, 185, 129, 0.15);
+          border-color: rgba(16, 185, 129, 0.4);
+          color: #34d399;
+        }
+
+        .btn-quick.reject:hover {
+          background: rgba(239, 68, 68, 0.15);
+          border-color: rgba(239, 68, 68, 0.4);
+          color: #f87171;
         }
       `}</style>
     </div>
