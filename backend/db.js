@@ -81,6 +81,15 @@ const FeedbackSchema = new mongoose.Schema({
 });
 const FeedbackModel = mongoose.model('Feedback', FeedbackSchema);
 
+const NotificationSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  read: { type: Boolean, default: false },
+  createdAt: { type: String, required: true }
+});
+const NotificationModel = mongoose.model('Notification', NotificationSchema);
+
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 2500 })
@@ -120,7 +129,8 @@ function getSeedData() {
     tasks: [],
     dailyLogs: [],
     skills: [],
-    feedbacks: []
+    feedbacks: [],
+    notifications: []
   };
 }
 
@@ -158,7 +168,7 @@ function readDB() {
     const data = fs.readFileSync(JSON_DB_PATH, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
-    return { users: [], tasks: [], dailyLogs: [], skills: [], feedbacks: [] };
+    return { users: [], tasks: [], dailyLogs: [], skills: [], feedbacks: [], notifications: [] };
   }
 }
 
@@ -360,11 +370,19 @@ const FeedbackGateway = {
   new: (d) => dbMode === 'mongo' ? new FeedbackModel(d) : makeMockConstructor('feedbacks')(d)
 };
 
+const NotificationGateway = {
+  find: (q) => dbMode === 'mongo' ? NotificationModel.find(q) : makeMockModel('notifications').find(q),
+  findById: (id) => dbMode === 'mongo' ? NotificationModel.findById(id) : makeMockModel('notifications').findById(id),
+  deleteMany: (q) => dbMode === 'mongo' ? NotificationModel.deleteMany(q) : makeMockModel('notifications').deleteMany(q),
+  new: (d) => dbMode === 'mongo' ? new NotificationModel(d) : makeMockConstructor('notifications')(d)
+};
+
 const UserClass = function(d) { return UserGateway.new(d); };
 const TaskClass = function(d) { return TaskGateway.new(d); };
 const DailyLogClass = function(d) { return DailyLogGateway.new(d); };
 const SkillClass = function(d) { return SkillGateway.new(d); };
 const FeedbackClass = function(d) { return FeedbackGateway.new(d); };
+const NotificationClass = function(d) { return NotificationGateway.new(d); };
 
 UserClass.find = UserGateway.find;
 UserClass.findOne = UserGateway.findOne;
@@ -387,12 +405,17 @@ SkillClass.deleteMany = SkillGateway.deleteMany;
 FeedbackClass.find = FeedbackGateway.find;
 FeedbackClass.deleteMany = FeedbackGateway.deleteMany;
 
+NotificationClass.find = NotificationGateway.find;
+NotificationClass.findById = NotificationGateway.findById;
+NotificationClass.deleteMany = NotificationGateway.deleteMany;
+
 module.exports = {
   User: UserClass,
   Task: TaskClass,
   DailyLog: DailyLogClass,
   Skill: SkillClass,
   Feedback: FeedbackClass,
+  Notification: NotificationClass,
   generateSalt,
   hashPassword,
   verifyPassword

@@ -8,10 +8,26 @@ const {
   DailyLog, 
   Skill, 
   Feedback, 
+  Notification,
   generateSalt, 
   hashPassword, 
   verifyPassword 
 } = require('./db');
+
+async function createNotification(userId, title, message) {
+  try {
+    const newNotif = new Notification({
+      userId,
+      title,
+      message,
+      read: false,
+      createdAt: new Date().toISOString()
+    });
+    await newNotif.save();
+  } catch (err) {
+    console.error('Failed to create notification:', err);
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -361,6 +377,14 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
     });
 
     await newTask.save();
+    
+    // Auto-create notification for assignee
+    await createNotification(
+      internId,
+      "New Task Assigned",
+      `Task "${title}" has been assigned to you by ${req.user.name}. Due: ${dueDate}`
+    );
+
     res.status(201).json(newTask);
   } catch (err) {
     res.status(500).json({ error: "Failed to record task assignment." });
@@ -509,6 +533,14 @@ app.put('/api/logs/:id', authenticateToken, async (req, res) => {
       log.comments = comments || '';
       
       await log.save();
+      
+      // Auto-create notification for log owner
+      await createNotification(
+        log.internId,
+        status === 'approved' ? "Daily Log Approved" : "Daily Log Rejected",
+        `Your worksheet log for ${log.date} was ${status} by ${req.user.name}. ${comments ? `Feedback: "${comments}"` : ''}`
+      );
+
       res.json(log);
     } else {
       res.status(403).json({ error: "Insufficient permissions to review this log." });
@@ -651,9 +683,57 @@ app.post('/api/feedback', authenticateToken, async (req, res) => {
     });
 
     await newFeedback.save();
+    
+    // Auto-create notification for user
+    await createNotification(
+      internId,
+      "New Performance Review",
+      `You received a new performance evaluation from ${req.user.name}.`
+    );
+
     res.status(201).json(newFeedback);
   } catch (err) {
     res.status(500).json({ error: "Failed to record performance review." });
+  }
+});
+
+// Notifications Endpoints
+app.get('/api/notifications', authenticateToken, async (req, res) => {
+  try {
+    const list = await Notification.find({ userId: req.user.id });
+    const sorted = list.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    res.json(sorted);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load notifications." });
+  }
+});
+
+app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const notif = await Notification.findById(id);
+    if (!notif) return res.status(404).json({ error: "Notification not found" });
+    if (String(notif.userId) !== String(req.user.id)) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    notif.read = true;
+    await notif.save();
+    res.json(notif);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update notification." });
+  }
+});
+
+app.put('/api/notifications/read-all', authenticateToken, async (req, res) => {
+  try {
+    const list = await Notification.find({ userId: req.user.id, read: false });
+    for (const notif of list) {
+      notif.read = true;
+      await notif.save();
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to mark notifications as read." });
   }
 });
 
