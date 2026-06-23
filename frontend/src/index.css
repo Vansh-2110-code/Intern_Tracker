@@ -565,10 +565,11 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(4, 6, 12, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -580,7 +581,9 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   position: relative;
   box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: 8vh;
+  margin-bottom: 2rem;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-header {
