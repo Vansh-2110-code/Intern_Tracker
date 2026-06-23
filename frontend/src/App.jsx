@@ -28,6 +28,10 @@ function DashboardLayout({ children }) {
 
   return (
     <div className="app-container">
+      <div className="ambient-glow glow-purple" style={{ top: '5%', left: '5%', opacity: 0.1 }}></div>
+      <div className="ambient-glow glow-cyan" style={{ bottom: '10%', right: '10%', opacity: 0.08 }}></div>
+      <div className="ambient-glow glow-magenta" style={{ top: '40%', left: '35%', width: '450px', height: '450px', opacity: 0.05 }}></div>
+
       {/* Mobile Top Header Bar */}
       <header className="mobile-header">
         <div className="mobile-logo-text" style={{ fontFamily: 'var(--font-display)', fontWeight: '700', fontSize: '1.1rem' }}>

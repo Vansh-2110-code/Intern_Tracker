@@ -479,14 +479,16 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         .nav-item:hover {
           color: var(--text-primary);
-          background: rgba(255, 255, 255, 0.02);
-          transform: translateX(4px);
+          background: rgba(255, 255, 255, 0.04);
+          transform: translateX(6px);
         }
 
         .nav-item.active {
           color: #ffffff;
-          background: var(--primary-gradient);
-          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(6, 182, 212, 0.1) 100%);
+          border-left: 3px solid var(--primary);
+          box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+          backdrop-filter: blur(8px);
         }
 
         .sidebar-footer {
