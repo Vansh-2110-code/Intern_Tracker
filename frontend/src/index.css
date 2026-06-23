@@ -91,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Layout Utilities */
 .app-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
   overflow: hidden;
   background-color: var(--bg-primary);
@@ -113,7 +113,8 @@ h1, h2, h3, h4, h5, h6 {
   flex-grow: 1;
   margin-left: var(--sidebar-width);
   padding: 2.5rem;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   position: relative;
   z-index: 1;
   background-image: 
@@ -125,11 +126,9 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
